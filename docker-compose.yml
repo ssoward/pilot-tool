@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Frontend React application
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - pilot-network
+
+  # Backend Node.js application
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=pilot_tool
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    networks:
+      - pilot-network
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=pilot_tool
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - pilot-network
+
+networks:
+  pilot-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
