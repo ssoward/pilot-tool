@@ -168,7 +168,7 @@ const AIAssistant = ({ className = '', currentInitiative }: AIAssistantProps) =>
 
       {/* Assistant Panel */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-[500px]">
+        <div className="absolute bottom-16 right-0 w-72 sm:w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-[500px]">
           {/* Header with Tabs */}
           <div className="bg-indigo-600 text-white p-4">
             <div className="flex justify-between items-center mb-3">

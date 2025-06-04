@@ -106,16 +106,16 @@ const AIPerformanceIndicator = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg shadow p-4 sm:p-5 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
             {getIcon()}
-            <p className="text-sm text-gray-500">{label}</p>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{label}</p>
           </div>
           <div className="flex items-baseline space-x-2 mt-1">
             <h3 
-              className="font-semibold text-2xl transition-all duration-1000 ease-out"
+              className="font-semibold text-xl sm:text-2xl transition-all duration-1000 ease-out"
               style={{ 
                 transform: `scale(${animatedValue === value ? 1 : 0.9})`,
                 opacity: animatedValue === value ? 1 : 0.7
@@ -126,7 +126,7 @@ const AIPerformanceIndicator = ({
             {getTrendIndicator()}
           </div>
         </div>
-        <div className="ml-4">
+        <div className="ml-3 sm:ml-4 flex-shrink-0">
           <div className={`w-3 h-3 rounded-full ${getStatusColor()} shadow-sm`}></div>
         </div>
       </div>
