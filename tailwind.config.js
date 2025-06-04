@@ -8,7 +8,7 @@ export default {
     extend: {},
   },
   plugins: [
-    require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
   ],
 }
