@@ -3,6 +3,10 @@ import * as roadmapController from '../controllers/roadmapController';
 
 const router = Router();
 
+// Analysis routes (place specific routes before parameterized routes)
+router.get('/roadmap-analysis', roadmapController.getTimelineAnalysis);
+router.get('/roadmap/capacity-projection', roadmapController.getCapacityProjection);
+
 // Roadmap Item routes
 router.get('/roadmap', roadmapController.getRoadmapItems);
 router.get('/roadmap/:id', roadmapController.getRoadmapItem);
@@ -18,8 +22,5 @@ router.put('/roadmap/bulk-timeline', roadmapController.bulkUpdateTimeline);
 router.post('/roadmap-milestones', roadmapController.createRoadmapMilestone);
 router.put('/roadmap-milestones/:id', roadmapController.updateRoadmapMilestone);
 router.delete('/roadmap-milestones/:id', roadmapController.deleteRoadmapMilestone);
-
-// Analysis routes
-router.get('/roadmap-analysis', roadmapController.getTimelineAnalysis);
 
 export default router;

@@ -1,0 +1,188 @@
+// filepath: /Users/ssoward/PILOT/src/services/roadmapService.js
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+
+// RoadmapFilters definition
+// teams - array of team IDs
+// statuses - array of status values
+// priorities - array of priority values
+// dateRange - object with start and end dates
+
+class RoadmapService {
+  // Roadmap Data Management
+  async getRoadmapItems(filters) {
+    const response = await axios.get(`${API_BASE_URL}/roadmap`, {
+      params: filters
+    });
+    return response.data;
+  }
+
+  async getRoadmapItem(itemId) {
+    const response = await axios.get(`${API_BASE_URL}/roadmap/${itemId}`);
+    return response.data;
+  }
+
+  async updateRoadmapItem(itemId, updates) {
+    const response = await axios.put(`${API_BASE_URL}/roadmap/${itemId}`, updates);
+    return response.data;
+  }
+
+  async createRoadmapItem(item) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap`, item);
+    return response.data;
+  }
+
+  async deleteRoadmapItem(itemId) {
+    await axios.delete(`${API_BASE_URL}/roadmap/${itemId}`);
+  }
+
+  // Timeline Management
+  async updateItemTimeline(
+    itemId,
+    startDate,
+    endDate,
+    validateResources = true
+  ) {
+    const response = await axios.put(`${API_BASE_URL}/roadmap/${itemId}/timeline`, {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      validateResources
+    });
+    return response.data;
+  }
+
+  async bulkUpdateTimeline(updates) {
+    const response = await axios.put(`${API_BASE_URL}/roadmap/bulk-timeline`, {
+      updates: updates.map(update => ({
+        ...update,
+        startDate: update.startDate.toISOString(),
+        endDate: update.endDate.toISOString()
+      }))
+    });
+    return response.data;
+  }
+
+  // Milestone Management
+  async createMilestone(itemId, milestone) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap/${itemId}/milestones`, milestone);
+    return response.data;
+  }
+
+  async updateMilestone(itemId, milestoneId, updates) {
+    const response = await axios.put(`${API_BASE_URL}/roadmap/${itemId}/milestones/${milestoneId}`, updates);
+    return response.data;
+  }
+
+  async deleteMilestone(itemId, milestoneId) {
+    await axios.delete(`${API_BASE_URL}/roadmap/${itemId}/milestones/${milestoneId}`);
+  }
+
+  // Dependency Management
+  async addDependency(itemId, dependsOnId) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap/${itemId}/dependencies`, {
+      dependsOnId
+    });
+    return response.data;
+  }
+
+  async removeDependency(itemId, dependsOnId) {
+    await axios.delete(`${API_BASE_URL}/roadmap/${itemId}/dependencies/${dependsOnId}`);
+  }
+
+  async getDependencyGraph() {
+    const response = await axios.get(`${API_BASE_URL}/roadmap/dependencies/graph`);
+    return response.data;
+  }
+
+  async validateDependencies(itemId, startDate, endDate) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap/dependencies/validate`, {
+      itemId,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    });
+    return response.data;
+  }
+
+  async getTeamRoadmap(teamId, timeframe = 'quarter') {
+    const response = await axios.get(`${API_BASE_URL}/roadmap/team/${teamId}`, {
+      params: { timeframe }
+    });
+    return response.data;
+  }
+
+  // Resource Planning
+  async getCapacityProjection(
+    startDate,
+    endDate,
+    teamIds
+  ) {
+    const response = await axios.get(`${API_BASE_URL}/roadmap/capacity-projection`, {
+      params: {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        teamIds: teamIds && teamIds.join(',')
+      }
+    });
+    return response.data;
+  }
+
+  // Optimization and Suggestions
+  async optimizeRoadmap(
+    constraints
+  ) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap/optimize`, {
+      constraints: constraints ? constraints : {}
+    });
+    
+    return response.data;
+  }
+
+  async suggestScheduleAdjustments(itemId) {
+    const response = await axios.get(`${API_BASE_URL}/roadmap/${itemId}/suggestions`);
+    return response.data;
+  }
+
+  // Export and Sharing
+  async exportRoadmap(format = 'json', filters = {}) {
+    const processedFilters = Object.entries(filters)
+      .filter(([_, v]) => v != null)
+      .reduce((acc, [key, value]) => {
+        // Process date objects to ISO strings
+        if (value instanceof Date) {
+          return {
+            ...acc,
+            [key]: value.toISOString()
+          };
+        }
+        
+        return {
+          ...acc,
+          [key]: value
+        };
+      }, {});
+
+    const response = await axios.get(`${API_BASE_URL}/roadmap/export`, {
+      params: { format, ...processedFilters },
+      responseType: format === 'pdf' || format === 'excel' ? 'blob' : 'json'
+    });
+    
+    return response.data;
+  }
+
+  async generateRoadmapReport(
+    teamIds,
+    timeframe = 'quarter'
+  ) {
+    const response = await axios.post(`${API_BASE_URL}/roadmap/report`, {
+      params: {
+        teamIds: teamIds && teamIds.join(','),
+        timeframe
+      }
+    });
+    return response.data;
+  }
+}
+
+export const roadmapService = new RoadmapService();
+export default roadmapService;

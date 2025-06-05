@@ -437,3 +437,87 @@ export const getTimelineAnalysis = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to analyze timeline', error });
   }
 };
+
+export const getCapacityProjection = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { startDate, endDate, teamIds } = req.query;
+    
+    if (!startDate || !endDate) {
+      res.status(400).json({ message: 'Start date and end date are required' });
+      return;
+    }
+
+    const start = new Date(startDate as string);
+    const end = new Date(endDate as string);
+    
+    // Parse team IDs if provided
+    const teamIdArray = teamIds ? (teamIds as string).split(',') : [];
+    
+    // Generate mock capacity projection data
+    // In a real implementation, this would calculate actual team capacities and allocations
+    const timeline = [];
+    const currentDate = new Date(start);
+    
+    while (currentDate <= end) {
+      const weekDate = currentDate.toISOString().split('T')[0];
+      
+      timeline.push({
+        date: weekDate,
+        totalCapacity: 100,
+        allocatedCapacity: Math.floor(Math.random() * 80) + 20,
+        availableCapacity: Math.floor(Math.random() * 50) + 10,
+        utilizationRate: Math.random() * 0.8 + 0.2,
+        teams: [
+          {
+            teamId: '1',
+            teamName: 'Frontend Team',
+            capacity: 40,
+            allocated: Math.floor(Math.random() * 35) + 5,
+            utilization: Math.random() * 0.9 + 0.1
+          },
+          {
+            teamId: '2', 
+            teamName: 'Backend Team',
+            capacity: 35,
+            allocated: Math.floor(Math.random() * 30) + 5,
+            utilization: Math.random() * 0.85 + 0.15
+          },
+          {
+            teamId: '3',
+            teamName: 'DevOps Team', 
+            capacity: 25,
+            allocated: Math.floor(Math.random() * 20) + 5,
+            utilization: Math.random() * 0.8 + 0.2
+          }
+        ]
+      });
+      
+      // Move to next week
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+    
+    const recommendations = [
+      {
+        type: 'rebalance' as const,
+        description: 'Consider redistributing work from Frontend Team to Backend Team for better balance',
+        impact: 'Could improve overall delivery timeline by 15%',
+        confidence: 0.78
+      },
+      {
+        type: 'additional_resources' as const,
+        description: 'DevOps team may need additional resources for infrastructure scaling',
+        impact: 'Prevents potential bottlenecks in deployment pipeline',
+        confidence: 0.65
+      }
+    ];
+    
+    const projection = {
+      timeline,
+      recommendations
+    };
+    
+    res.status(200).json(projection);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get capacity projection', error });
+  }
+};
