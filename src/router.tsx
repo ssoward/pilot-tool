@@ -1,6 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
+import TeamManagementDashboard from './components/TeamManagementDashboard';
+import RoadmapVisualization from './components/RoadmapVisualization';
+import InitiativeAssignmentPage from './pages/InitiativeAssignmentPage';
 
 // Placeholder components for routes we haven't created yet
 const InitiativeList = () => <div>Initiative List Page</div>;
@@ -34,6 +37,18 @@ const router = createBrowserRouter([
   {
     path: '/initiatives/:id/edit',
     element: <MainLayout><InitiativeForm /></MainLayout>,
+  },
+  {
+    path: '/teams',
+    element: <MainLayout><TeamManagementDashboard /></MainLayout>,
+  },
+  {
+    path: '/roadmap',
+    element: <MainLayout><RoadmapVisualization /></MainLayout>,
+  },
+  {
+    path: '/assignments',
+    element: <MainLayout><InitiativeAssignmentPage /></MainLayout>,
   },
   {
     path: '/reports',

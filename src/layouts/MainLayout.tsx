@@ -17,6 +17,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <nav className="hidden md:flex space-x-4 lg:space-x-6">
               <Link to="/" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Dashboard</Link>
               <Link to="/initiatives" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Initiatives</Link>
+              <Link to="/teams" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Teams</Link>
+              <Link to="/roadmap" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Roadmap</Link>
+              <Link to="/assignments" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Assignments</Link>
               <Link to="/reports" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Reports</Link>
             </nav>
           </div>
@@ -42,6 +45,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           <nav className="container mx-auto px-4 py-2 flex justify-around">
             <Link to="/" className="hover:text-indigo-200 transition-colors text-sm py-2">Dashboard</Link>
             <Link to="/initiatives" className="hover:text-indigo-200 transition-colors text-sm py-2">Initiatives</Link>
+            <Link to="/teams" className="hover:text-indigo-200 transition-colors text-sm py-2">Teams</Link>
+            <Link to="/roadmap" className="hover:text-indigo-200 transition-colors text-sm py-2">Roadmap</Link>
+            <Link to="/assignments" className="hover:text-indigo-200 transition-colors text-sm py-2">Assignments</Link>
             <Link to="/reports" className="hover:text-indigo-200 transition-colors text-sm py-2">Reports</Link>
           </nav>
         </div>

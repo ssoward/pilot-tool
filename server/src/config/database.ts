@@ -33,4 +33,24 @@ const testConnection = async () => {
   }
 };
 
-export { sequelize, testConnection };
+// Sync all models
+const syncDatabase = async () => {
+  try {
+    // Import models to ensure they are registered
+    await import('../models/Initiative');
+    await import('../models/Team');
+    await import('../models/TeamMember');
+    await import('../models/TeamAssignment');
+    await import('../models/RoadmapItem');
+    await import('../models/RoadmapMilestone');
+    await import('../models/ResourceConflict');
+    
+    await sequelize.sync({ alter: true });
+    console.log('Database synchronized successfully.');
+  } catch (error) {
+    console.error('Error synchronizing database:', error);
+  }
+};
+
+export { sequelize, testConnection, syncDatabase };
+export default sequelize;

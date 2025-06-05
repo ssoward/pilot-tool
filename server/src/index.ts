@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { config } from 'dotenv';
 import { rateLimit } from 'express-rate-limit';
+import { testConnection, syncDatabase } from './config/database';
 
 // Load environment variables
 config();
@@ -45,9 +46,13 @@ app.get('/api/version', (req, res) => {
 // Import routes here
 import initiativeRoutes from './routes/initiativeRoutes';
 import aiRoutes from './routes/aiRoutes';
+import teamRoutes from './routes/teamRoutes';
+import roadmapRoutes from './routes/roadmapRoutes';
 
 app.use('/api/initiatives', initiativeRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api', teamRoutes);
+app.use('/api', roadmapRoutes);
 
 // Default catch-all route
 app.use('*', (req, res) => {
@@ -67,8 +72,25 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+const startServer = async () => {
+  try {
+    // Test database connection
+    await testConnection();
+    
+    // Sync database
+    await syncDatabase();
+    
+    // Start the server
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 export default app;

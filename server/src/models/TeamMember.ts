@@ -1,0 +1,83 @@
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
+import Team from './Team';
+
+class TeamMember extends Model {
+  public id!: string;
+  public teamId!: string;
+  public userId!: string;
+  public name!: string;
+  public email!: string;
+  public role!: 'lead' | 'senior' | 'mid' | 'junior';
+  public capacity!: number;
+  public currentWorkload!: number;
+  public skills!: string[];
+  public readonly joinedAt!: Date;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+TeamMember.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    teamId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'teams',
+        key: 'id',
+      },
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM('lead', 'senior', 'mid', 'junior'),
+      allowNull: false,
+    },
+    capacity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 100,
+    },
+    currentWorkload: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    skills: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: [],
+    },
+    joinedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'TeamMember',
+    tableName: 'team_members',
+    timestamps: true,
+  }
+);
+
+// Set up the relationship
+TeamMember.belongsTo(Team, { foreignKey: 'teamId', as: 'team' });
+Team.hasMany(TeamMember, { foreignKey: 'teamId', as: 'members' });
+
+export default TeamMember;

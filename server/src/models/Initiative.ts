@@ -18,6 +18,12 @@ export interface InitiativeAttributes {
   goals?: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  
+  // Enhanced fields for team management and resource planning
+  assignedTeams?: string[];
+  estimatedEffort?: number;
+  actualEffort?: number;
+  requiredSkills?: string[];
 }
 
 export interface InitiativeCreationAttributes extends Omit<InitiativeAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
@@ -36,6 +42,12 @@ class Initiative extends Model<InitiativeAttributes, InitiativeCreationAttribute
   public businessValue?: string;
   public dependencies?: string[];
   public goals?: string[];
+  
+  // Team management and resource planning fields
+  public assignedTeams?: string[];
+  public estimatedEffort?: number;
+  public actualEffort?: number;
+  public requiredSkills?: string[];
   
   // Timestamps
   public readonly createdAt!: Date;
@@ -96,6 +108,25 @@ Initiative.init({
     defaultValue: []
   },
   goals: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
+    defaultValue: []
+  },
+  assignedTeams: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
+    defaultValue: []
+  },
+  estimatedEffort: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0
+  },
+  actualEffort: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  requiredSkills: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
     defaultValue: []
