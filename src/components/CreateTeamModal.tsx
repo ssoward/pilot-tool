@@ -1,236 +1,217 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus } from 'lucide-react';
-import type { Team, TeamCreateRequest } from '../types/Team';
+import { X } from 'lucide-react';
+import type { Team, TeamCreateRequest, TeamUpdateRequest } from '../types/Team';
 
 interface CreateTeamModalProps {
-  team?: Team;
+  isOpen: boolean;
+  team?: Team | null;
   onClose: () => void;
-  onSubmit: (data: TeamCreateRequest) => void;
+  onSubmit: (data: TeamCreateRequest | TeamUpdateRequest) => void;
   isLoading: boolean;
-  isEdit?: boolean;
 }
 
 const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
+  isOpen,
   team,
   onClose,
   onSubmit,
   isLoading,
-  isEdit = false
 }) => {
-  const [formData, setFormData] = useState<TeamCreateRequest>({
-    name: '',
-    description: '',
-    managerId: '',
-    managerName: '',
-    capacity: 100,
-    skills: []
+  const isEdit = !!(team && team.teamId);
+  const [formData, setFormData] = useState<TeamCreateRequest | TeamUpdateRequest>(() => {
+    if (isEdit && team) {
+      return {
+        teamId: team.teamId,
+        teamName: team.teamName,
+        teamDescription: team.teamDescription,
+        jiraProjectId: team.jiraProjectId,
+        jiraBoardId: team.jiraBoardId,
+        teamBacklogLabel: team.teamBacklogLabel,
+        teamNotificationSettings: team.teamNotificationSettings,
+        orgUnitId: team.orgUnitId,
+      };
+    }
+    return {
+      teamName: '',
+      teamDescription: '',
+      jiraProjectId: undefined, // Initialize optional fields
+      jiraBoardId: undefined,
+      teamBacklogLabel: undefined,
+      teamNotificationSettings: undefined,
+      orgUnitId: undefined,
+    };
   });
-  const [newSkill, setNewSkill] = useState('');
 
   useEffect(() => {
-    if (team && isEdit) {
-      setFormData({
-        name: team.name,
-        description: team.description,
-        managerId: team.managerId,
-        managerName: team.managerName,
-        capacity: team.capacity,
-        skills: [...team.skills]
-      });
+    if (isOpen) { // Reset form when modal opens or team/isEdit changes
+      if (isEdit && team) {
+        setFormData({
+          teamId: team.teamId,
+          teamName: team.teamName,
+          teamDescription: team.teamDescription,
+          jiraProjectId: team.jiraProjectId,
+          jiraBoardId: team.jiraBoardId,
+          teamBacklogLabel: team.teamBacklogLabel,
+          teamNotificationSettings: team.teamNotificationSettings,
+          orgUnitId: team.orgUnitId,
+        });
+      } else {
+        setFormData({
+          teamName: '',
+          teamDescription: '',
+          jiraProjectId: undefined,
+          jiraBoardId: undefined,
+          teamBacklogLabel: undefined,
+          teamNotificationSettings: undefined,
+          orgUnitId: undefined,
+        });
+      }
     }
-  }, [team, isEdit]);
+  }, [team, isEdit, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name.trim() && formData.managerId.trim() && formData.managerName.trim()) {
+    if (formData.teamName && formData.teamName.trim()) { // Check if teamName exists and is not empty
       onSubmit(formData);
     }
   };
 
-  const addSkill = () => {
-    if (newSkill.trim() && !formData.skills.includes(newSkill.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, newSkill.trim()]
-      }));
-      setNewSkill('');
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const numValue = (name === 'jiraProjectId' || name === 'jiraBoardId' || name === 'orgUnitId') && value !== '' ? parseInt(value, 10) : value;
+    setFormData(prev => ({ ...prev, [name]: numValue === '' ? undefined : numValue }));
   };
 
-  const removeSkill = (skillToRemove: string) => {
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills.filter(skill => skill !== skillToRemove)
-    }));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.currentTarget === e.target) {
-      e.preventDefault();
-      addSkill();
-    }
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? 'Edit Team' : 'Create New Team'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Team Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter team name"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Describe the team's purpose and responsibilities"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="managerId" className="block text-sm font-medium text-gray-700 mb-1">
-              Manager ID *
-            </label>
-            <input
-              type="text"
-              id="managerId"
-              value={formData.managerId}
-              onChange={(e) => setFormData(prev => ({ ...prev, managerId: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter manager user ID"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="managerName" className="block text-sm font-medium text-gray-700 mb-1">
-              Manager Name *
-            </label>
-            <input
-              type="text"
-              id="managerName"
-              value={formData.managerName}
-              onChange={(e) => setFormData(prev => ({ ...prev, managerName: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter manager name"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 mb-1">
-              Team Capacity (Story Points/Sprint)
-            </label>
-            <input
-              type="number"
-              id="capacity"
-              value={formData.capacity}
-              onChange={(e) => setFormData(prev => ({ ...prev, capacity: parseInt(e.target.value) || 0 }))}
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="100"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Team Skills
-            </label>
-            
-            {/* Skills List */}
-            {formData.skills.length > 0 && (
-              <div className="mb-3 flex flex-wrap gap-2">
-                {formData.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
-                  >
-                    {skill}
-                    <button
-                      type="button"
-                      onClick={() => removeSkill(skill)}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
-                    >
-                      <Minus className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Add Skill Input */}
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Add a skill (e.g., React, Python, DevOps)"
-              />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-800 bg-opacity-75 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <form onSubmit={handleSubmit}>
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                {isEdit ? 'Edit Team' : 'Create New Team'}
+              </h2>
               <button
                 type="button"
-                onClick={addSkill}
-                className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <X size={24} />
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Press Enter or click + to add skills
-            </p>
-          </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="teamName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Team Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="teamName"
+                  id="teamName"
+                  required
+                  value={formData.teamName || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="teamDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="teamDescription"
+                  id="teamDescription"
+                  rows={3}
+                  value={formData.teamDescription || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="orgUnitId" className="block text-sm font-medium text-gray-700 mb-1">
+                  Org Unit ID
+                </label>
+                <input
+                  type="number"
+                  name="orgUnitId"
+                  id="orgUnitId"
+                  value={formData.orgUnitId || ''} 
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="jiraProjectId" className="block text-sm font-medium text-gray-700 mb-1">
+                  Jira Project ID
+                </label>
+                <input
+                  type="number"
+                  name="jiraProjectId"
+                  id="jiraProjectId"
+                  value={formData.jiraProjectId || ''} 
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+               <div>
+                <label htmlFor="jiraBoardId" className="block text-sm font-medium text-gray-700 mb-1">
+                  Jira Board ID
+                </label>
+                <input
+                  type="number"
+                  name="jiraBoardId"
+                  id="jiraBoardId"
+                  value={formData.jiraBoardId || ''} 
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="teamBacklogLabel" className="block text-sm font-medium text-gray-700 mb-1">
+                  Team Backlog Label
+                </label>
+                <input
+                  type="text"
+                  name="teamBacklogLabel"
+                  id="teamBacklogLabel"
+                  value={formData.teamBacklogLabel || ''} 
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+               <div>
+                <label htmlFor="teamNotificationSettings" className="block text-sm font-medium text-gray-700 mb-1">
+                  Team Notification Settings
+                </label>
+                <input
+                  type="text"
+                  name="teamNotificationSettings"
+                  id="teamNotificationSettings"
+                  value={formData.teamNotificationSettings || ''} 
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isLoading || !formData.name.trim() || !formData.managerId.trim() || !formData.managerName.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>{isEdit ? 'Updating...' : 'Creating...'}</span>
-                </div>
-              ) : (
-                <span>{isEdit ? 'Update Team' : 'Create Team'}</span>
-              )}
+              {isLoading ? 'Saving...' : (isEdit ? 'Save Changes' : 'Create Team')}
             </button>
           </div>
         </form>

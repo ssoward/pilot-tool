@@ -127,14 +127,14 @@ const RoadmapTimelineContent: React.FC<RoadmapTimelineProps> = ({
   const generateTimeHeaders = useCallback((): React.JSX.Element[] => {
     const headers: React.JSX.Element[] = [];
     const current = new Date(timeRange.start);
-    let dayCount = 0;
 
     while (current <= timeRange.end) {
       if (currentView === 'month') {
         // Daily headers for month view
+        const dateKey = `${currentView}-${current.getFullYear()}-${current.getMonth()}-${current.getDate()}`;
         headers.push(
           <div
-            key={dayCount}
+            key={dateKey}
             className="flex-shrink-0 text-xs text-gray-600 border-r border-gray-200 px-1"
             style={{ width: `${pixelsPerDay * 1}px` }}
           >
@@ -144,9 +144,10 @@ const RoadmapTimelineContent: React.FC<RoadmapTimelineProps> = ({
         current.setDate(current.getDate() + 1);
       } else if (currentView === 'quarter') {
         // Weekly headers for quarter view
+        const dateKey = `${currentView}-${current.getFullYear()}-${current.getMonth()}-${current.getDate()}`;
         headers.push(
           <div
-            key={dayCount}
+            key={dateKey}
             className="flex-shrink-0 text-xs text-gray-600 border-r border-gray-200 px-1"
             style={{ width: `${pixelsPerDay * 7}px` }}
           >
@@ -156,9 +157,10 @@ const RoadmapTimelineContent: React.FC<RoadmapTimelineProps> = ({
         current.setDate(current.getDate() + 7);
       } else {
         // Monthly headers for year view
+        const dateKey = `${currentView}-${current.getFullYear()}-${current.getMonth()}`;
         headers.push(
           <div
-            key={dayCount}
+            key={dateKey}
             className="flex-shrink-0 text-xs text-gray-600 border-r border-gray-200 px-1"
             style={{ width: `${pixelsPerDay * 30}px` }}
           >
@@ -167,7 +169,6 @@ const RoadmapTimelineContent: React.FC<RoadmapTimelineProps> = ({
         );
         current.setMonth(current.getMonth() + 1);
       }
-      dayCount++;
     }
 
     return headers;

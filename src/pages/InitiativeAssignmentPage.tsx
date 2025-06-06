@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import InitiativeAssignment from '../components/InitiativeAssignment';
 import { useInitiatives, useTeams, useTeamAssignments } from '../hooks/useQueries';
+import { calculateScrollbarWidth } from '../utils/scrollbarUtils';
 
 const InitiativeAssignmentPage: React.FC = () => {
+  // Recalculate scrollbar width when the assignments page mounts
+  useEffect(() => {
+    calculateScrollbarWidth();
+  }, []);
+  
   const { data: initiatives = [], isLoading: initiativesLoading } = useInitiatives();
   const { data: teams = [], isLoading: teamsLoading } = useTeams();
   const { 

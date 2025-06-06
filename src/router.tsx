@@ -4,11 +4,11 @@ import Dashboard from './pages/Dashboard';
 import TeamManagementDashboard from './components/TeamManagementDashboard';
 import RoadmapVisualization from './components/RoadmapVisualization';
 import InitiativeAssignmentPage from './pages/InitiativeAssignmentPage';
+import EmployeesPage from './pages/EmployeesPage';
+import InitiativeManagementPage from './pages/InitiativeManagementPage';
 
 // Placeholder components for routes we haven't created yet
-const InitiativeList = () => <div>Initiative List Page</div>;
 const InitiativeDetail = () => <div>Initiative Detail Page</div>;
-const InitiativeForm = () => <div>Initiative Form Page</div>;
 const Reports = () => <div>Reports Page</div>;
 const Login = () => <div>Login Page</div>;
 const NotFound = () => <div className="flex flex-col items-center justify-center h-screen">
@@ -23,20 +23,20 @@ const router = createBrowserRouter([
     element: <MainLayout><Dashboard /></MainLayout>,
   },
   {
+    path: '/employees', // Add this route definition
+    element: <MainLayout><EmployeesPage /></MainLayout>,
+  },
+  {
     path: '/initiatives',
-    element: <MainLayout><InitiativeList /></MainLayout>,
+    element: <MainLayout><InitiativeManagementPage /></MainLayout>,
   },
   {
     path: '/initiatives/:id',
     element: <MainLayout><InitiativeDetail /></MainLayout>,
   },
   {
-    path: '/initiatives/new',
-    element: <MainLayout><InitiativeForm /></MainLayout>,
-  },
-  {
     path: '/initiatives/:id/edit',
-    element: <MainLayout><InitiativeForm /></MainLayout>,
+    element: <MainLayout><InitiativeManagementPage /></MainLayout>,
   },
   {
     path: '/teams',

@@ -1,12 +1,19 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import AIAssistant from '../components/AIAssistant';
+import { useEffect } from 'react';
+import { calculateScrollbarWidth } from '../utils/scrollbarUtils';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
+  // Recalculate scrollbar width on layout mount to ensure consistent sizing
+  useEffect(() => {
+    calculateScrollbarWidth();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -18,6 +25,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <Link to="/" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Dashboard</Link>
               <Link to="/initiatives" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Initiatives</Link>
               <Link to="/teams" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Teams</Link>
+              <Link to="/employees" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Employees</Link> {/* Add this line */}
               <Link to="/roadmap" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Roadmap</Link>
               <Link to="/assignments" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Assignments</Link>
               <Link to="/reports" className="hover:text-indigo-200 transition-colors text-sm lg:text-base">Reports</Link>
@@ -46,6 +54,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <Link to="/" className="hover:text-indigo-200 transition-colors text-sm py-2">Dashboard</Link>
             <Link to="/initiatives" className="hover:text-indigo-200 transition-colors text-sm py-2">Initiatives</Link>
             <Link to="/teams" className="hover:text-indigo-200 transition-colors text-sm py-2">Teams</Link>
+            <Link to="/employees" className="hover:text-indigo-200 transition-colors text-sm py-2">Employees</Link> {/* Add this line */}
             <Link to="/roadmap" className="hover:text-indigo-200 transition-colors text-sm py-2">Roadmap</Link>
             <Link to="/assignments" className="hover:text-indigo-200 transition-colors text-sm py-2">Assignments</Link>
             <Link to="/reports" className="hover:text-indigo-200 transition-colors text-sm py-2">Reports</Link>

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Plus, Users, Settings, TrendingUp, AlertTriangle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Plus, Users, AlertTriangle } from 'lucide-react';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
   useTeams,
-  useResourceAllocation,
-  useResourceConflicts,
   useCreateTeam,
   useUpdateTeam,
   useDeleteTeam
@@ -11,18 +10,39 @@ import {
 import { useNotifications } from '../contexts/NotificationContext';
 import TeamCard from './TeamCard';
 import CreateTeamModal from './CreateTeamModal';
-import ResourceAllocationChart from './charts/ResourceAllocationChart';
 import type { Team, TeamCreateRequest, TeamUpdateRequest } from '../types/Team';
 
 const TeamManagementDashboard: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [view, ] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string>('');
 
   const { addNotification } = useNotifications();
   const { data: teams, isLoading: teamsLoading, error: teamsError } = useTeams();
-  const { data: resourceAllocation, isLoading: resourceLoading } = useResourceAllocation();
-  const { data: conflicts } = useResourceConflicts();
+
+  // Filter teams based on search criteria
+  const filteredTeams = useMemo(() => {
+    if (!teams) return [];
+    return teams.filter(team => {
+      const lowerSearchQuery = searchQuery.toLowerCase(); // Cache toLowerCase for search query
+
+      const matchesSearch = searchQuery === '' ||
+        (team.teamName && team.teamName.toLowerCase().includes(lowerSearchQuery)) || // Guard teamName before toLowerCase
+        (team.teamDescription && team.teamDescription.toLowerCase().includes(lowerSearchQuery));
+      
+      const matchesOrgUnit = orgUnitFilter === '' || (team.orgUnitName && team.orgUnitName === orgUnitFilter); // Also guard orgUnitName for safety, though type says string
+      
+      return matchesSearch && matchesOrgUnit;
+    });
+  }, [teams, searchQuery, orgUnitFilter]);
+
+  // Get unique org units for filter dropdown
+  const uniqueOrgUnits = useMemo(() => {
+    if (!teams) return [];
+    return [...new Set(teams.map(team => team.orgUnitName))].filter(Boolean);
+  }, [teams]);
 
   const createTeamMutation = useCreateTeam();
   const updateTeamMutation = useUpdateTeam();
@@ -34,7 +54,7 @@ const TeamManagementDashboard: React.FC = () => {
       addNotification({
         type: 'success',
         title: 'Team Created',
-        message: `Team "${teamData.name}" has been created successfully.`
+        message: `Team "${teamData.teamName}" has been created successfully.`
       });
       setShowCreateModal(false);
     } catch (error) {
@@ -46,14 +66,16 @@ const TeamManagementDashboard: React.FC = () => {
     }
   };
 
-  const handleUpdateTeam = async (teamId: string, updates: TeamUpdateRequest) => {
+  const handleUpdateTeam = async (teamId: number, updates: TeamUpdateRequest) => {
     try {
-      await updateTeamMutation.mutateAsync({ teamId, teamData: updates });
+      await updateTeamMutation.mutateAsync({ teamId: String(teamId), teamData: updates });
       addNotification({
         type: 'success',
         title: 'Team Updated',
         message: 'Team has been updated successfully.'
       });
+      setSelectedTeam(null);
+      setShowCreateModal(false);
     } catch (error) {
       addNotification({
         type: 'error',
@@ -63,13 +85,13 @@ const TeamManagementDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteTeam = async (teamId: string, teamName: string) => {
+  const handleDeleteTeam = async (teamId: number, teamName: string) => {
     if (!confirm(`Are you sure you want to delete team "${teamName}"? This action cannot be undone.`)) {
       return;
     }
 
     try {
-      await deleteTeamMutation.mutateAsync(teamId);
+      await deleteTeamMutation.mutateAsync(String(teamId));
       addNotification({
         type: 'success',
         title: 'Team Deleted',
@@ -103,196 +125,119 @@ const TeamManagementDashboard: React.FC = () => {
     );
   }
 
-  const totalTeams = teams?.length || 0;
-  const totalMembers = teams?.reduce((sum, team) => sum + team.memberCount, 0) || 0;
-  const averageUtilization = resourceAllocation?.length 
-    ? Math.round(resourceAllocation.reduce((sum, ra) => sum + ra.utilizationPercentage, 0) / resourceAllocation.length)
-    : 0;
-  const criticalConflicts = conflicts?.filter(c => c.severity === 'high').length || 0;
+  const handleModalSubmit = (data: TeamCreateRequest | TeamUpdateRequest) => {
+    if (selectedTeam && 'teamId' in selectedTeam && selectedTeam.teamId) {
+      handleUpdateTeam(selectedTeam.teamId, data as TeamUpdateRequest);
+    } else {
+      handleCreateTeam(data as TeamCreateRequest);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <header className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-800">Team Management</h1>
+        <p className="text-lg text-gray-600 mt-1">Oversee, manage, and organize your engineering teams.</p>
+      </header>
+
+      {/* Search and Filter Section */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search Input */}
+          <div className="md:col-span-2">
+            <div className="relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by team name or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Org Unit Filter */}
+          <div>
+            <select
+              value={orgUnitFilter}
+              onChange={(e) => setOrgUnitFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">All Org Units</option>
+              {uniqueOrgUnits.map(orgUnit => (
+                <option key={orgUnit} value={orgUnit}>{orgUnit}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {/* Results Count */}
+        <div className="mt-4 text-sm text-gray-600">
+          Showing {filteredTeams.length} of {teams?.length || 0} teams
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
-          <p className="text-gray-600">Manage teams, members, and resource allocation</p>
+          {/* Placeholder for potential future actions or info */}
         </div>
         <button
-          onClick={() => setShowCreateModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          type="button"
+          onClick={() => { setSelectedTeam(null); setShowCreateModal(true); }}
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          <Plus className="h-4 w-4" />
-          <span>Create Team</span>
+          <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+          New Team
         </button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Teams</p>
-              <p className="text-2xl font-bold text-gray-900">{totalTeams}</p>
-            </div>
-            <Users className="h-8 w-8 text-blue-600" />
-          </div>
-        </div>
+      {/* Removed dashboard summary cards */}
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Members</p>
-              <p className="text-2xl font-bold text-gray-900">{totalMembers}</p>
-            </div>
-            <Users className="h-8 w-8 text-green-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Avg Utilization</p>
-              <p className="text-2xl font-bold text-gray-900">{averageUtilization}%</p>
-            </div>
-            <TrendingUp className="h-8 w-8 text-purple-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Critical Issues</p>
-              <p className="text-2xl font-bold text-gray-900">{criticalConflicts}</p>
-            </div>
-            <AlertTriangle className={`h-8 w-8 ${criticalConflicts > 0 ? 'text-red-600' : 'text-gray-400'}`} />
-          </div>
-        </div>
+      <div className={`mt-6 ${view === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
+        {filteredTeams && filteredTeams.map(team => (
+          <TeamCard 
+            key={team.teamId} 
+            team={team} 
+            onEdit={() => { setSelectedTeam(team); setShowCreateModal(true); }} 
+            onDelete={() => handleDeleteTeam(team.teamId, team.teamName)} 
+            view={view} 
+          />
+        ))}
       </div>
-
-      {/* Resource Allocation Chart */}
-      {!resourceLoading && resourceAllocation && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Resource Allocation Overview</h2>
-          <ResourceAllocationChart data={resourceAllocation} />
-        </div>
-      )}
-
-      {/* Resource Conflicts */}
-      {conflicts && conflicts.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Resource Conflicts</h2>
-          <div className="space-y-3">
-            {conflicts.slice(0, 5).map((conflict) => (
-              <div
-                key={conflict.id}
-                className={`p-4 rounded-lg border-l-4 ${
-                  conflict.severity === 'high'
-                    ? 'bg-red-50 border-red-400'
-                    : conflict.severity === 'medium'
-                    ? 'bg-yellow-50 border-yellow-400'
-                    : 'bg-blue-50 border-blue-400'
-                }`}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium text-gray-900">{conflict.description}</p>
-                    <p className="text-sm text-gray-600 mt-1">{conflict.suggestedResolution}</p>
-                    <div className="flex items-center space-x-4 mt-2">
-                      <span className="text-xs text-gray-500">
-                        Teams: {conflict.affectedTeams.join(', ')}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Initiatives: {conflict.affectedInitiatives.length}
-                      </span>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      conflict.severity === 'high'
-                        ? 'bg-red-100 text-red-800'
-                        : conflict.severity === 'medium'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-blue-100 text-blue-800'
-                    }`}
-                  >
-                    {conflict.severity.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Teams Grid/List */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Teams</h2>
-            <div className="flex items-center space-x-2">
+      {filteredTeams && filteredTeams.length === 0 && (
+        <div className="text-center py-10">
+          <Users className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            {searchQuery || orgUnitFilter ? 'No teams match your current filters.' : 'No teams found.'}
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            {searchQuery || orgUnitFilter ? 'Try adjusting your search or filter criteria.' : 'Get started by creating a new team.'}
+          </p>
+          {!searchQuery && !orgUnitFilter && (
+            <div className="mt-6">
               <button
-                onClick={() => setView('grid')}
-                className={`p-2 rounded ${view === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                type="button"
+                onClick={() => { setSelectedTeam(null); setShowCreateModal(true); }}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <Settings className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setView('list')}
-                className={`p-2 rounded ${view === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
-              >
-                <Users className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6">
-          {teams && teams.length > 0 ? (
-            <div className={view === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
-              {teams.map((team) => (
-                <TeamCard
-                  key={team.id}
-                  team={team}
-                  view={view}
-                  onEdit={(team) => setSelectedTeam(team)}
-                  onDelete={(teamId, teamName) => handleDeleteTeam(teamId, teamName)}
-                  resourceAllocation={resourceAllocation?.find(ra => ra.teamId === team.id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No teams found</h3>
-              <p className="text-gray-600 mb-4">Get started by creating your first team.</p>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                Create Team
+                <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                New Team
               </button>
             </div>
           )}
         </div>
-      </div>
-
-      {/* Modals */}
-      {showCreateModal && (
-        <CreateTeamModal
-          onClose={() => setShowCreateModal(false)}
-          onSubmit={handleCreateTeam}
-          isLoading={createTeamMutation.isPending}
-        />
       )}
 
-      {selectedTeam && (
+      {showCreateModal && (
         <CreateTeamModal
-          team={selectedTeam}
-          onClose={() => setSelectedTeam(null)}
-          onSubmit={(data) => handleUpdateTeam(selectedTeam.id, data)}
-          isLoading={updateTeamMutation.isPending}
-          isEdit
+          isOpen={showCreateModal}
+          onClose={() => {
+            setShowCreateModal(false);
+            setSelectedTeam(null);
+          }}
+          onSubmit={handleModalSubmit}
+          team={selectedTeam || undefined} // Changed to pass undefined if null
+          isLoading={createTeamMutation.isPending || updateTeamMutation.isPending}
         />
       )}
     </div>

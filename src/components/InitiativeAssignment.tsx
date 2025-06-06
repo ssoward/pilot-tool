@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Initiative } from '../types/Initiative';
 import type { Team, TeamAssignment } from '../types/Team';
 import { 
@@ -9,6 +9,7 @@ import {
   XMarkIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
+import { calculateScrollbarWidth } from '../utils/scrollbarUtils';
 
 interface InitiativeAssignmentProps {
   initiatives: Initiative[];
@@ -41,13 +42,32 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
     allocation: 50
   });
 
+  // Handle modal state and calculate scrollbar width to prevent layout shifts
+  useEffect(() => {
+    // Calculate scrollbar width when component mounts
+    calculateScrollbarWidth();
+    
+    if (isAssigning) {
+      // Add the modal-open class to body when modal is shown
+      document.body.classList.add('modal-open');
+    } else {
+      // Remove the modal-open class when modal is hidden
+      document.body.classList.remove('modal-open');
+    }
+
+    // Clean up on component unmount
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isAssigning]);
+
   // Filter initiatives based on search query
   const filteredInitiatives = useMemo(() => {
     if (!searchQuery.trim()) return initiatives;
     
     const query = searchQuery.toLowerCase();
     return initiatives.filter(initiative =>
-      initiative.name.toLowerCase().includes(query) ||
+      initiative.summary.toLowerCase().includes(query) ||
       initiative.description?.toLowerCase().includes(query) ||
       initiative.jiraKey?.toLowerCase().includes(query)
     );
@@ -60,7 +80,7 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
 
   // Get team by ID
   const getTeam = (teamId: string) => {
-    return teams.find(team => team.id === teamId);
+    return teams.find(team => team.teamId.toString() === teamId);
   };
 
   // Calculate team capacity utilization
@@ -72,7 +92,7 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
 
   // Get available teams for assignment (not at 100% capacity)
   const getAvailableTeams = () => {
-    return teams.filter(team => getTeamUtilization(team.id) < 100);
+    return teams.filter(team => getTeamUtilization(team.teamId.toString()) < 100);
   };
 
   // Check if team is already assigned to initiative
@@ -95,18 +115,21 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'planning': return 'bg-yellow-100 text-yellow-800';
       case 'in-progress': return 'bg-blue-100 text-blue-800';
       case 'completed': return 'bg-green-100 text-green-800';
       case 'on-hold': return 'bg-gray-100 text-gray-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      case 'proposal': return 'bg-yellow-100 text-yellow-800';
+      case 'active': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
+    switch (priority.toLowerCase()) {
       case 'high': return 'text-red-600';
       case 'medium': return 'text-yellow-600';
       case 'low': return 'text-green-600';
@@ -157,13 +180,13 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
         <h3 className="text-lg font-medium text-gray-900 mb-4">Team Capacity Overview</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {teams.map(team => {
-            const utilization = getTeamUtilization(team.id);
-            const teamAssignments = assignments.filter(a => a.teamId === team.id);
+            const utilization = getTeamUtilization(team.teamId.toString());
+            const teamAssignments = assignments.filter(a => a.teamId === team.teamId.toString());
             
             return (
-              <div key={team.id} className="border border-gray-200 rounded-lg p-4">
+              <div key={team.teamId} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-900">{team.name}</h4>
+                  <h4 className="font-medium text-gray-900">{team.teamName}</h4>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getUtilizationColor(utilization)}`}>
                     {utilization}%
                   </span>
@@ -220,7 +243,7 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
                             <option value="">Select an initiative</option>
                             {initiatives.map(initiative => (
                               <option key={initiative.id} value={initiative.id}>
-                                {initiative.name} ({initiative.jiraKey})
+                                {initiative.summary} ({initiative.jiraKey})
                               </option>
                             ))}
                           </select>
@@ -237,10 +260,10 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
                           >
                             <option value="">Select a team</option>
                             {getAvailableTeams()
-                              .filter(team => !isTeamAssigned(formData.initiativeId, team.id))
+                              .filter(team => !isTeamAssigned(formData.initiativeId, team.teamId.toString()))
                               .map(team => (
-                                <option key={team.id} value={team.id}>
-                                  {team.name} ({100 - getTeamUtilization(team.id)}% available)
+                                <option key={team.teamId} value={team.teamId.toString()}>
+                                  {team.teamName} ({100 - getTeamUtilization(team.teamId.toString())}% available)
                                 </option>
                               ))}
                           </select>
@@ -309,13 +332,17 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
                   <div className="flex-1">
                     {/* Initiative Header */}
                     <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="text-lg font-medium text-gray-900">{initiative.name}</h4>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(initiative.status)}`}>
-                        {initiative.status}
-                      </span>
-                      <span className={`text-sm ${getPriorityColor(initiative.priority)}`}>
-                        {initiative.priority} priority
-                      </span>
+                      <h4 className="text-lg font-medium text-gray-900">{initiative.summary}</h4>
+                      {initiative.status && (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(initiative.status)}`}>
+                          {initiative.status}
+                        </span>
+                      )}
+                      {initiative.priority && (
+                        <span className={`text-sm ${getPriorityColor(initiative.priority)}`}>
+                          {initiative.priority} priority
+                        </span>
+                      )}
                     </div>
 
                     {/* Initiative Details */}
@@ -330,16 +357,17 @@ const InitiativeAssignment: React.FC<InitiativeAssignmentProps> = ({
                     {initiativeAssignments.length > 0 ? (
                       <div className="space-y-2">
                         <h5 className="text-sm font-medium text-gray-700">Assigned Teams:</h5>
-                        {initiativeAssignments.map(assignment => {
-                          const team = getTeam(assignment.teamId);
-                          if (!team) return null;
+                        {initiativeAssignments
+                          .filter(assignment => getTeam(assignment.teamId) !== null)
+                          .map(assignment => {
+                            const team = getTeam(assignment.teamId)!;
 
-                          return (
-                            <div key={assignment.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                            return (
+                              <div key={assignment.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                               <div className="flex items-center space-x-3">
                                 <UserGroupIcon className="h-5 w-5 text-gray-400" />
                                 <div>
-                                  <span className="font-medium text-gray-900">{team.name}</span>
+                                  <span className="font-medium text-gray-900">{team.teamName}</span>
                                   <div className="text-xs text-gray-500">
                                     {assignment.allocatedCapacity}% allocation
                                   </div>

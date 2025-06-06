@@ -317,12 +317,13 @@ const InitiativeAssignment = ({
                     {initiativeAssignments.length > 0 ? (
                       <div className="space-y-2">
                         <h5 className="text-sm font-medium text-gray-700">Assigned Teams:</h5>
-                        {initiativeAssignments.map(assignment => {
-                          const team = getTeam(assignment.teamId);
-                          if (!team) return null;
+                        {initiativeAssignments
+                          .filter(assignment => getTeam(assignment.teamId) !== null)
+                          .map(assignment => {
+                            const team = getTeam(assignment.teamId);
 
-                          return (
-                            <div key={assignment.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                            return (
+                              <div key={assignment.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                               <div className="flex items-center space-x-3">
                                 <UserGroupIcon className="h-5 w-5 text-gray-400" />
                                 <div>

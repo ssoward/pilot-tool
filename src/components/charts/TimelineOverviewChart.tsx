@@ -33,7 +33,8 @@ const TimelineOverviewChart = ({ initiatives, className = '' }: TimelineOverview
     });
 
     const priorityCounts = monthInitiatives.reduce((acc, initiative) => {
-      acc[initiative.priority] = (acc[initiative.priority] || 0) + 1;
+      const priority = initiative.priority || 'low';
+      acc[priority] = (acc[priority] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
@@ -45,7 +46,7 @@ const TimelineOverviewChart = ({ initiatives, className = '' }: TimelineOverview
       medium: priorityCounts.medium || 0,
       high: priorityCounts.high || 0,
       critical: priorityCounts.critical || 0,
-      completed: monthInitiatives.filter(i => i.status === 'completed').length
+      completed: monthInitiatives.filter(i => i.status === 'Completed').length
     };
   });
 
@@ -63,9 +64,13 @@ const TimelineOverviewChart = ({ initiatives, className = '' }: TimelineOverview
             </p>
             <div className="border-t pt-2 mt-2">
               <p className="text-xs text-gray-600 mb-1">By Priority:</p>
-              {['critical', 'high', 'medium', 'low'].map(priority => {
-                const count = payload[0].payload[priority];
-                if (count > 0) {
+              {['critical', 'high', 'medium', 'low']
+                .filter(priority => {
+                  const count = payload[0].payload[priority];
+                  return count > 0;
+                })
+                .map(priority => {
+                  const count = payload[0].payload[priority];
                   return (
                     <p key={priority} className="text-xs flex items-center">
                       <span 
@@ -75,9 +80,7 @@ const TimelineOverviewChart = ({ initiatives, className = '' }: TimelineOverview
                       <span className="capitalize">{priority}:</span> {count}
                     </p>
                   );
-                }
-                return null;
-              })}
+                })}
             </div>
           </div>
         </div>

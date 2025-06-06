@@ -1,13 +1,14 @@
 export interface Team {
-  id: string;
-  name: string;
-  description: string;
-  managerId: string;
-  managerName: string;
-  capacity: number;
-  currentWorkload: number;
-  skills: string[];
-  memberCount: number;
+  teamId: number;
+  teamName: string;
+  teamDescription: string | null;
+  jiraProjectId: number;
+  jiraBoardId: number;
+  teamBacklogLabel: string | null;
+  teamNotificationSettings: string | null;
+  empCount: number;
+  orgUnitId: number;
+  orgUnitName: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -94,23 +95,35 @@ export interface RoadmapMilestone {
 }
 
 export interface TeamCreateRequest {
-  name: string;
-  description: string;
-  managerId: string;
-  managerName: string;
-  capacity: number;
-  skills: string[];
+  teamId?: number;
+  teamName: string;
+  teamDescription?: string | null;
+  jiraProjectId?: number;
+  jiraBoardId?: number;
+  teamBacklogLabel?: string | null;
+  teamNotificationSettings?: string | null;
+  empCount?: number;
+  orgUnitId?: number;
+  orgUnitName?: string;
 }
 
 export interface TeamUpdateRequest {
-  name?: string;
-  description?: string;
-  managerId?: string;
-  managerName?: string;
-  capacity?: number;
-  skills?: string[];
+  teamId?: number; // Optional, as it's part of the route params typically
+  teamName?: string;
+  teamDescription?: string | null;
+  jiraProjectId?: number;
+  jiraBoardId?: number;
+  teamBacklogLabel?: string | null;
+  teamNotificationSettings?: string | null;
+  orgUnitId?: number;
+  // empCount is likely managed by assignments, not direct update
 }
 
+/**
+ * Represents the structure for a team member when creating or updating.
+ * Fields like id, teamId, and userId are typically managed by the system
+ * and not provided in requests.
+ */
 export interface TeamMemberCreateRequest {
   teamId: string;
   userId: string;
