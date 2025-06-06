@@ -1,27 +1,46 @@
 import { Sequelize } from 'sequelize';
 import { config } from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 // Load environment variables
 config();
 
-// Database connection configuration
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'pilot_tool',
-  process.env.DB_USER || 'postgres',
-  process.env.DB_PASSWORD || 'postgres',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    dialect: 'postgres',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
+// Database connection configuration with SQLite fallback for local development
+const createSequelizeInstance = () => {
+  // Check if we should use SQLite (when PostgreSQL is not available)
+  const useSQLite = process.env.USE_SQLITE === 'true' || process.env.NODE_ENV === 'development';
+  
+  if (useSQLite) {
+    console.log('Using SQLite for local development');
+    return new Sequelize({
+      dialect: 'sqlite',
+      storage: path.join(__dirname, '../../data/pilot_tool.sqlite'),
+      logging: process.env.NODE_ENV === 'development' ? console.log : false,
+    });
+  } else {
+    console.log('Using PostgreSQL for production/staging');
+    return new Sequelize(
+      process.env.DB_NAME || 'pilot_tool',
+      process.env.DB_USER || 'postgres',
+      process.env.DB_PASSWORD || 'postgres',
+      {
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432'),
+        dialect: 'postgres',
+        logging: process.env.NODE_ENV === 'development' ? console.log : false,
+        pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000
+        }
+      }
+    );
   }
-);
+};
+
+const sequelize = createSequelizeInstance();
 
 // Test database connection
 const testConnection = async () => {
@@ -45,7 +64,23 @@ const syncDatabase = async () => {
     await import('../models/RoadmapMilestone');
     await import('../models/ResourceConflict');
     
-    await sequelize.sync({ alter: true });
+    // For SQLite in development, skip sync if database already exists to prevent migration loops
+    if (process.env.USE_SQLITE === 'true' && process.env.NODE_ENV === 'development') {
+      const fs = require('fs');
+      const dbPath = path.join(__dirname, '../../data/pilot_tool.sqlite');
+      
+      if (fs.existsSync(dbPath)) {
+        console.log('Database synchronized successfully. (SQLite database already exists, skipping sync)');
+        return;
+      }
+    }
+    
+    // Sync options based on environment
+    const syncOptions = process.env.USE_SQLITE === 'true' 
+      ? { force: false, alter: false } 
+      : { force: false, alter: true };
+    
+    await sequelize.sync(syncOptions);
     console.log('Database synchronized successfully.');
   } catch (error) {
     console.error('Error synchronizing database:', error);

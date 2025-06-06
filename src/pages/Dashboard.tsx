@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { initiativeService } from '../services/api';
 import type { Initiative, InitiativeStatus } from '../types/Initiative';
@@ -35,11 +35,15 @@ const Dashboard = () => {
   const { data: resourceAllocation = [], isLoading: resourceLoading } = useResourceAllocation();
   const { data: resourceConflicts = [], isLoading: conflictsLoading } = useResourceConflicts();
   
-  // Get capacity projection for the next 90 days
-  const startDate = new Date();
-  const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + 90);
-  useCapacityProjection(startDate, endDate);
+  // Get capacity projection for the next 90 days - memoize dates to prevent infinite re-renders
+  const capacityDates = useMemo(() => {
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 90);
+    return { startDate, endDate };
+  }, []); // Empty dependency array means these dates are calculated only once
+  
+  useCapacityProjection(capacityDates.startDate, capacityDates.endDate);
   
   useEffect(() => {
     const fetchInitiatives = async () => {
@@ -49,18 +53,35 @@ const Dashboard = () => {
         setInitiatives(data);
         setError(null);
         
-        // Generate AI metrics for the initiatives
+        // Generate AI metrics for the initiatives in parallel to reduce load time
         if (data.length > 0) {
           try {
-            await generateAIMetrics(data);
-            await getContextualInsights('dashboard', { initiatives: data });
-            
-            // Generate advanced analytics
-            setAnalyticsLoading(true);
-            const analytics = await advancedAIAnalyticsService.generateAdvancedAnalytics(data);
-            setAdvancedAnalytics(analytics);
+            // Run AI operations in parallel to improve performance
+            const [metricsResult, insightsResult, analyticsResult] = await Promise.allSettled([
+              generateAIMetrics(data),
+              getContextualInsights('dashboard', { initiatives: data }),
+              (async () => {
+                setAnalyticsLoading(true);
+                return advancedAIAnalyticsService.generateAdvancedAnalytics(data);
+              })()
+            ]);
+
+            // Handle advanced analytics result
+            if (analyticsResult.status === 'fulfilled') {
+              setAdvancedAnalytics(analyticsResult.value);
+            } else {
+              console.warn('Advanced analytics failed:', analyticsResult.reason);
+            }
+
+            // Log any failures for debugging but don't block the UI
+            if (metricsResult.status === 'rejected') {
+              console.warn('AI metrics generation failed:', metricsResult.reason);
+            }
+            if (insightsResult.status === 'rejected') {
+              console.warn('Contextual insights failed:', insightsResult.reason);
+            }
           } catch (aiError) {
-            console.warn('AI metrics generation failed:', aiError);
+            console.warn('AI services error:', aiError);
           } finally {
             setAnalyticsLoading(false);
           }
@@ -74,12 +95,15 @@ const Dashboard = () => {
     };
     
     fetchInitiatives();
-  }, [generateAIMetrics, getContextualInsights]);
+  }, []); // Remove dependencies that change on every render
   
-  const statusCounts = initiatives.reduce((acc, initiative) => {
-    acc[initiative.status] = (acc[initiative.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // Memoize expensive calculations to prevent unnecessary re-renders
+  const statusCounts = useMemo(() => {
+    return initiatives.reduce((acc, initiative) => {
+      acc[initiative.status] = (acc[initiative.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [initiatives]);
   
   return (
     <div className="space-y-6 sm:space-y-8">

@@ -2,6 +2,29 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import Initiative from './Initiative';
 
+// Helper function to handle array fields for different database types
+const getArrayFieldType = () => {
+  const dialect = sequelize.getDialect();
+  if (dialect === 'sqlite') {
+    return {
+      type: DataTypes.TEXT,
+      get(this: any) {
+        const value = this.getDataValue(arguments[0]);
+        return value ? JSON.parse(value) : [];
+      },
+      set(this: any, value: string[]) {
+        this.setDataValue(arguments[0], JSON.stringify(value || []));
+      }
+    };
+  } else {
+    return {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: []
+    };
+  }
+};
+
 class RoadmapItem extends Model {
   public id!: string;
   public initiativeId!: string;
@@ -54,9 +77,8 @@ RoadmapItem.init(
       defaultValue: 'medium',
     },
     dependencies: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: false,
-      defaultValue: [],
+      ...getArrayFieldType(),
+      allowNull: false
     },
     estimatedEffort: {
       type: DataTypes.INTEGER,

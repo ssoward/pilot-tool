@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { initiativeService } from '../services/api';
 import { advancedAIAnalyticsService } from '../services/advancedAIAnalytics';
 import teamManagementService from '../services/teamManagementService';
@@ -127,7 +128,7 @@ export const useRealTimeUpdates = () => {
 export const usePerformanceMetrics = () => {
   const queryClient = useQueryClient();
   
-  const getQueryMetrics = () => {
+  const getQueryMetrics = useCallback(() => {
     const cache = queryClient.getQueryCache();
     const queries = cache.getAll();
     
@@ -139,7 +140,7 @@ export const usePerformanceMetrics = () => {
       cacheHitRatio: queries.length > 0 ? 
         queries.filter(q => q.state.dataUpdatedAt > 0).length / queries.length : 0,
     };
-  };
+  }, [queryClient]);
   
   return { getQueryMetrics };
 };

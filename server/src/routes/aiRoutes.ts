@@ -71,4 +71,42 @@ router.post('/ask', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * Generate AI metrics based on initiative data
+ */
+router.post('/generate-metrics', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { initiatives } = req.body;
+    
+    if (!initiatives || !Array.isArray(initiatives)) {
+      res.status(400).json({ error: 'Initiatives array is required' });
+      return;
+    }
+    
+    const metrics = await aiService.generateAIMetrics(initiatives);
+    res.status(200).json(metrics);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Get contextual insights based on current view/data
+ */
+router.post('/contextual-insights', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { context, data } = req.body;
+    
+    if (!context) {
+      res.status(400).json({ error: 'Context is required' });
+      return;
+    }
+    
+    const insights = await aiService.generateContextualInsights(context, data);
+    res.status(200).json({ insights });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

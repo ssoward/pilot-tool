@@ -1,6 +1,29 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
+// Helper function to handle array fields for different database types
+const getArrayFieldType = () => {
+  const dialect = sequelize.getDialect();
+  if (dialect === 'sqlite') {
+    return {
+      type: DataTypes.TEXT,
+      get(this: any) {
+        const value = this.getDataValue(arguments[0]);
+        return value ? JSON.parse(value) : [];
+      },
+      set(this: any, value: string[]) {
+        this.setDataValue(arguments[0], JSON.stringify(value || []));
+      }
+    };
+  } else {
+    return {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: []
+    };
+  }
+};
+
 class Team extends Model {
   public id!: string;
   public name!: string;
@@ -53,9 +76,8 @@ Team.init(
       defaultValue: 0,
     },
     skills: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: false,
-      defaultValue: [],
+      ...getArrayFieldType(),
+      allowNull: false
     },
     memberCount: {
       type: DataTypes.INTEGER,

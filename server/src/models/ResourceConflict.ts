@@ -1,6 +1,28 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
+// Helper function to handle array fields for different database types
+const getArrayFieldType = () => {
+  const dialect = sequelize.getDialect();
+  if (dialect === 'sqlite') {
+    return {
+      type: DataTypes.TEXT,
+      get(this: any) {
+        const value = this.getDataValue(arguments[0]);
+        return value ? JSON.parse(value) : [];
+      },
+      set(this: any, value: string[]) {
+        this.setDataValue(arguments[0], JSON.stringify(value || []));
+      }
+    };
+  } else {
+    return {
+      type: DataTypes.ARRAY(DataTypes.UUID),
+      allowNull: false
+    };
+  }
+};
+
 class ResourceConflict extends Model {
   public id!: string;
   public type!: 'overallocation' | 'skill_gap' | 'timeline_conflict';
@@ -34,12 +56,12 @@ ResourceConflict.init(
       allowNull: false,
     },
     affectedTeams: {
-      type: DataTypes.ARRAY(DataTypes.UUID),
-      allowNull: false,
+      ...getArrayFieldType(),
+      allowNull: false
     },
     affectedInitiatives: {
-      type: DataTypes.ARRAY(DataTypes.UUID),
-      allowNull: false,
+      ...getArrayFieldType(),
+      allowNull: false
     },
     suggestedResolution: {
       type: DataTypes.TEXT,

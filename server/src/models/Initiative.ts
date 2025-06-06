@@ -2,6 +2,29 @@ import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
 import { v4 as uuidv4 } from 'uuid';
 
+// Helper function to handle array fields for different database types
+const getArrayFieldType = () => {
+  const dialect = sequelize.getDialect();
+  if (dialect === 'sqlite') {
+    return {
+      type: DataTypes.TEXT,
+      get(this: any) {
+        const value = this.getDataValue(arguments[0]);
+        return value ? JSON.parse(value) : [];
+      },
+      set(this: any, value: string[]) {
+        this.setDataValue(arguments[0], JSON.stringify(value || []));
+      }
+    };
+  } else {
+    return {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+      defaultValue: []
+    };
+  }
+};
+
 export interface InitiativeAttributes {
   id: string;
   name: string;
@@ -103,19 +126,16 @@ Initiative.init({
     allowNull: true
   },
   dependencies: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    allowNull: true,
-    defaultValue: []
+    ...getArrayFieldType(),
+    allowNull: true
   },
   goals: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    allowNull: true,
-    defaultValue: []
+    ...getArrayFieldType(),
+    allowNull: true
   },
   assignedTeams: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    allowNull: true,
-    defaultValue: []
+    ...getArrayFieldType(),
+    allowNull: true
   },
   estimatedEffort: {
     type: DataTypes.INTEGER,
@@ -127,9 +147,8 @@ Initiative.init({
     allowNull: true
   },
   requiredSkills: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    allowNull: true,
-    defaultValue: []
+    ...getArrayFieldType(),
+    allowNull: true
   }
 }, {
   sequelize,
