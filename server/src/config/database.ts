@@ -64,20 +64,24 @@ const syncDatabase = async () => {
     await import('../models/RoadmapMilestone');
     await import('../models/ResourceConflict');
     
+    // Setup model associations after all models are imported
+    const { setupAssociations } = await import('../models/associations');
+    setupAssociations();
+    
     // For SQLite in development, skip sync if database already exists to prevent migration loops
-    if (process.env.USE_SQLITE === 'true' && process.env.NODE_ENV === 'development') {
-      const fs = require('fs');
-      const dbPath = path.join(__dirname, '../../data/pilot_tool.sqlite');
-      
-      if (fs.existsSync(dbPath)) {
-        console.log('Database synchronized successfully. (SQLite database already exists, skipping sync)');
-        return;
-      }
-    }
+    // if (process.env.USE_SQLITE === 'true' && process.env.NODE_ENV === 'development') {
+    //   const fs = require('fs');
+    //   const dbPath = path.join(__dirname, '../../data/pilot_tool.sqlite');
+    //   
+    //   if (fs.existsSync(dbPath)) {
+    //     console.log('Database synchronized successfully. (SQLite database already exists, skipping sync)');
+    //     return;
+    //   }
+    // }
     
     // Sync options based on environment
     const syncOptions = process.env.USE_SQLITE === 'true' 
-      ? { force: false, alter: false } 
+      ? { force: false, alter: true } 
       : { force: false, alter: true };
     
     await sequelize.sync(syncOptions);

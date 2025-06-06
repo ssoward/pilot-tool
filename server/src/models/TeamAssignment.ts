@@ -1,7 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import Team from './Team';
-import Initiative from './Initiative';
 
 class TeamAssignment extends Model {
   public id!: string;
@@ -66,11 +64,5 @@ TeamAssignment.init(
     timestamps: true,
   }
 );
-
-// Set up relationships
-TeamAssignment.belongsTo(Team, { foreignKey: 'teamId', as: 'team' });
-TeamAssignment.belongsTo(Initiative, { foreignKey: 'initiativeId', as: 'initiative' });
-Team.hasMany(TeamAssignment, { foreignKey: 'teamId', as: 'assignments' });
-Initiative.hasMany(TeamAssignment, { foreignKey: 'initiativeId', as: 'teamAssignments' });
 
 export default TeamAssignment;

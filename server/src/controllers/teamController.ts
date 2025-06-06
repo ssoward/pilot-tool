@@ -9,10 +9,16 @@ import { Op } from 'sequelize';
 // Team CRUD operations
 export const createTeam = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('Creating team with data:', req.body);
     const team = await Team.create(req.body);
     res.status(201).json(team);
-  } catch (error) {
-    res.status(400).json({ message: 'Failed to create team', error });
+  } catch (error: any) {
+    console.error('Team creation error:', error);
+    res.status(400).json({ 
+      message: 'Failed to create team', 
+      error: error.message || error,
+      details: error.errors || error.original
+    });
   }
 };
 

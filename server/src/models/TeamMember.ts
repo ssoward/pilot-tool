@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import Team from './Team';
 
 // Helper function to handle array fields for different database types
 const getArrayFieldType = () => {
@@ -8,12 +7,18 @@ const getArrayFieldType = () => {
   if (dialect === 'sqlite') {
     return {
       type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '[]',
       get(this: any) {
-        const value = this.getDataValue(arguments[0]);
-        return value ? JSON.parse(value) : [];
+        const value = this.getDataValue('skills');
+        try {
+          return value ? JSON.parse(value) : [];
+        } catch {
+          return [];
+        }
       },
       set(this: any, value: string[]) {
-        this.setDataValue(arguments[0], JSON.stringify(value || []));
+        this.setDataValue('skills', JSON.stringify(value || []));
       }
     };
   } else {
@@ -80,10 +85,7 @@ TeamMember.init(
       allowNull: false,
       defaultValue: 0,
     },
-    skills: {
-      ...getArrayFieldType(),
-      allowNull: false
-    },
+    skills: getArrayFieldType(),
     joinedAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -97,9 +99,5 @@ TeamMember.init(
     timestamps: true,
   }
 );
-
-// Set up the relationship
-TeamMember.belongsTo(Team, { foreignKey: 'teamId', as: 'team' });
-Team.hasMany(TeamMember, { foreignKey: 'teamId', as: 'members' });
 
 export default TeamMember;

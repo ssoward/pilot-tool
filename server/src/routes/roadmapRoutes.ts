@@ -4,7 +4,7 @@ import * as roadmapController from '../controllers/roadmapController';
 const router = Router();
 
 // Analysis routes (place specific routes before parameterized routes)
-router.get('/roadmap-analysis', roadmapController.getTimelineAnalysis);
+router.get('/roadmap/analysis', roadmapController.getTimelineAnalysis);
 router.get('/roadmap/capacity-projection', roadmapController.getCapacityProjection);
 
 // Roadmap Item routes

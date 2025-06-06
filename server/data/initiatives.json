@@ -1,0 +1,730 @@
+[
+  {
+    "id": "1043569",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "Reduce costs and increase performance of backend services through database optimization",
+    "teamName": "Home",
+    "teamId": "2",
+    "type": "adaptive",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Engagement",
+      "value": "4",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "better delivery of inspiring customer experiences",
+      "feature": "a data store of historical usage",
+      "goal": "deeper understanding and insights into usage of our backend services",
+      "peopleSegment": "Home Team members",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "FamilySearch will continuously deliver better experience to our patrons because we're able to have insights about the usage of our back-end services and will know when additional optimization is needed.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1042150",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "Storied.com Storybook button on memory pages",
+    "teamName": "Memories Web",
+    "teamId": "3",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "contract compliance",
+      "feature": "a button on FS memory pages that takes users to the storied.com StoryBook landing page",
+      "goal": "an increase of customers to their site",
+      "peopleSegment": "storied.com",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "The business goal is to meet our contractual obligations.  While doing this, we also hope minimize any negative customer impacts.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1042056",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "Allow URLs in Memories",
+    "teamName": "Memories Foundation",
+    "teamId": "60",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "fewer memory rejections, increased customer satisfaction and richer memory metadata",
+      "feature": "a new FS submitter's agreement URL policy and new memory screening service code",
+      "goal": "the ability to upload memories containing URLs",
+      "peopleSegment": "FS memory users",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": " Reduce the amount of memory restrictions based on the URL policy to decrease by >90%\n* Increase user satisfaction and prevent loss of frustrated users\n* Increase useful metadata about the memory (customer find memories with URLs more valuable)",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1041311",
+    "productGroupName": "Middle East-Europe-Africa-North America",
+    "productGroupId": "13",
+    "summary": "MENA - Archive Publishing Solution",
+    "teamName": "MEENA",
+    "teamId": "26",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Records",
+      "value": "1",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 4,
+      "effort": 4,
+      "calculated": 3,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "Millions of records from archives with collections that would will never be published without this solution. ",
+      "feature": "Archives Publishing Solution",
+      "goal": "Records published, Record available to the global diaspora",
+      "peopleSegment": "Record Custodians and Archives",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "Archives in MENA and other regions with their collections published online through this tool.\n\nArchives working through getting their collections digitized, indexed and published using solutions providers connected with this project.\n\nWe are going to start with a couple of archives to prove out the technology and processes, but this is a very large market with thousands of local and regional record custodians.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1041300",
+    "productGroupName": "Middle East-Europe-Africa-North America",
+    "productGroupId": "13",
+    "summary": "Library and Archives Canada - Adisoke discovery experiences",
+    "teamName": "MEENA",
+    "teamId": "26",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 2,
+      "effort": 2,
+      "calculated": 3,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1041058",
+    "productGroupName": "Platform Services",
+    "productGroupId": "4",
+    "summary": "Decrease Use of Vague Standard Places in FS Family Tree and Records",
+    "teamName": "Standards",
+    "teamId": "41",
+    "type": "corrective",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "increased valid standard place usage ",
+      "feature": "functionality to hide the vague place descriptions",
+      "goal": "a way to remove standard places that were never intended for detailed use",
+      "peopleSegment": "patrons and UI teams",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "This will increase the number of valid standard places used, which allow patrons to better find sources for their ancestors that make these names temple-ready.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1040472",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "RootsTech: Simplify Content Creation to Improve the Speaker and Exhibitor Experience",
+    "teamName": "Content Platform (CPT)",
+    "teamId": "4",
+    "type": "corrective",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Engagement",
+      "value": "4",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 4,
+      "effort": 3,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "RTCONTENT",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1040457",
+    "productGroupName": "",
+    "productGroupId": "0",
+    "summary": "Approval process for Guarded Consumer and Trusted Consumer",
+    "teamName": "",
+    "teamId": "0",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 4,
+      "effort": 3,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "we will provide access and secure the living data",
+      "feature": "living data",
+      "goal": "access and controls of that access",
+      "peopleSegment": "developers",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "Guarded consumer and trusted consumer will allow for access to living and other sensitive data.  We need to have attribution and control over who is granted access to this data.  This is to provide an approval system that will provided needed controls and auditing of who is granted access to this data.",
+    "jiraProjectKey": "APVGC",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1040389",
+    "productGroupName": "Platform Services",
+    "productGroupId": "4",
+    "summary": "Improve Dynatrace OneAgent Installation",
+    "teamName": "Developer Platform",
+    "teamId": "61",
+    "type": "adaptive",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 4,
+      "effort": 2,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "DYNAONE",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1040114",
+    "productGroupName": "Middle East-Europe-Africa-North America",
+    "productGroupId": "13",
+    "summary": "Enhancements to Oral Gen Search Product ",
+    "teamName": "Africa",
+    "teamId": "22",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": {
+      "label": "Submittable Names",
+      "value": "3",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 3,
+      "effort": 2,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "30% of the users clicking on view family interview",
+      "feature": "the Storyized Village Experience",
+      "goal": "the enhancements and bug fixes",
+      "peopleSegment": "African patrons",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "During the last 12 months (ending in April 2025), we had 27,596 users start the oral genealogy search experience (the Storyized Village Experience) even though this experience is not currently being marketed. These are organic users as well as patrons who attended devotionals in Africa, where they were introduced to FamilySearch Africa (where this experience lives), even though the focus of the devotionals is on creating a keepsake tree.\n\nImproving this product will result in more people clicking on view family interviews (oral genealogies). This is the first step in finding one's ancestor after doing a search. These clicks will demonstrate greater engagement with the product. They'll show that users are dropping off less on the first few pages of the product.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1039988",
+    "productGroupName": "Committees",
+    "productGroupId": "9",
+    "summary": "AI-Generated Life History of Ancestors to Share with Patrons",
+    "teamName": "Submitter Committee",
+    "teamId": "91",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Submitters",
+      "value": "2",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "an increment of 5% in the retention of members who previously submitted names of their ancestors using OR ",
+      "feature": "an AI-generated life history that helps them learn more about their deceased ancestor and that is shared with them",
+      "goal": "a closer connection and/or feel identified to the people OR shares with them",
+      "peopleSegment": "those who use OR",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "One of the biggest strength of Ordinances Ready is it simplicity. With only a few clicks a member can prepare and print the name of an ancestor and then take it to the temple.\n\nOR uses an algorithm to select names to provide to patrons based on the following priority criteria: (1) their own prioritized reservation list, based on the order the patron puts the name in that list, (2) their shared family group list, (3) names that they shared with the temple that are still in the temple inventory, (4) names that are in their tree and that need ordinances, (5) a name related to them that was shared by someone else, (6) names shared by their ward members, (7) their stake members, or (8) from the general temple inventory. This means that for those with a mature family tree, there is a great probability that the names OR will provide are related to them.\n\nHowever, because most of the time patrons have not done the actual work of preparing most of the names that OR presents to them, many times they do not feel a particular connection with them. Although patrons using OR cannot select the names they receive and take to the temple, they can learn more about them and in that way develop a connection with them.\n\nThe proposal is to help increase the connection between OR users and the names they receive and take to the temple by providing them with helpful information that helps create relatedness and connection with their ancestors. This is an initiative aimed to *retain Submitters.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1039864",
+    "productGroupName": "Middle East-Europe-Africa-North America",
+    "productGroupId": "13",
+    "summary": "Match Online Guided Tree with Ordinances to Mobile App Version",
+    "teamName": "Africa",
+    "teamId": "22",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": {
+      "label": "Submitters",
+      "value": "2",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 2,
+      "effort": 1,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1039553",
+    "productGroupName": "Records",
+    "productGroupId": "5",
+    "summary": "RPL -Memories/Patron DAS AWS Backup ",
+    "teamName": "Digital Preservation & Storage (DPS)",
+    "teamId": "45",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": {
+      "label": "Records",
+      "value": "1",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 3,
+      "effort": 3,
+      "calculated": 3,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "a long-term production level online backup solution",
+      "feature": "an industry standard backup solution",
+      "goal": "trust we will never lose Memories data again ",
+      "peopleSegment": "we use an off the shelf AWS Backup Service to ",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "MEMBACKUP",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1039265",
+    "productGroupName": "Platform Services",
+    "productGroupId": "4",
+    "summary": "Standards - Increase Transliteration Reach And Accuracy and decrease Maintenance Costs using lama-ut LLM",
+    "teamName": "Standards",
+    "teamId": "41",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Approved",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "far broader transliteration support and simplified maintenance",
+      "feature": "transliteration initiative",
+      "goal": "implementation of the lama-ut LLM",
+      "peopleSegment": "the Standards Team",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "The lama-ut LLM has the potential to simply take over all transliteration work from all languages and scripts to Latin/Roman script.  This LLM could replace all existing transliterators, reducing the work of maintaining them.  Moreover, lama-ut would transliterate any script for which we currently do not have a transliterator.\n\nThe business values derived from implementing lama-ut are as follows:\n\n1. We would have immediate support for all known scripts, including those we do not currently support.  The scripts/languages we do not currently support include Hebrew, Amharic, a number of Indian scripts, Georgian, Armenian, Serbian and Ukrainian, among others.\n2. We would retire all transliterators written in procedural code, reducing the complexity of the transliteration service and reducing its maintenance costs.\n3. lama-ut would provide phonetic transliteration, resulting in a Romanization that would be phonically far more similar to the original than our current transliterators, which simply performs character replacement.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1038593",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "RootsTech: Recommendation Engine",
+    "teamName": "Content Platform (CPT)",
+    "teamId": "4",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Engagement",
+      "value": "4",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1038296",
+    "productGroupName": "Tree and Temple",
+    "productGroupId": "2",
+    "summary": "Support Temple Department's Paperless System for Ordinances",
+    "teamName": "Temple",
+    "teamId": "17",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Submitters",
+      "value": "2",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 2,
+      "effort": 3,
+      "calculated": 3,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "an increase in the number of submitters",
+      "feature": "the FamilySearch Temple Team supporting the Temple Department's paperless ordinances system in temples",
+      "goal": "an easy way to get ordinances to perform in the temple with their temple recommend",
+      "peopleSegment": "patrons",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "TEMPPRLESS",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1036668",
+    "productGroupName": "Discovery",
+    "productGroupId": "1",
+    "summary": "RootsTech: Proposal AI Review",
+    "teamName": "Content Platform (CPT)",
+    "teamId": "4",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Draft",
+    "score": 3,
+    "workingGroup": {
+      "label": "Engagement",
+      "value": "4",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 5,
+      "effort": 3,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "a more efficient and optimized review process",
+      "feature": "the Proposal AI review system",
+      "goal": "improved proposal quality and SEO effectiveness",
+      "peopleSegment": "the RootsTech conference team",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "The desired business outcome is to achieve a more efficient, accurate, and optimized review process for speaker proposals. Key indicators for success could include reduced review time, improved proposal quality, and enhanced SEO effectiveness.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1036061",
+    "productGroupName": "Tree and Temple",
+    "productGroupId": "2",
+    "summary": "Intro page to FS Tree App",
+    "teamName": "Tree Mobile",
+    "teamId": "12",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Approved",
+    "score": 3,
+    "workingGroup": {
+      "label": "Submitters",
+      "value": "2",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "",
+      "feature": "",
+      "goal": "",
+      "peopleSegment": "",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": null,
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1035919",
+    "productGroupName": "Asia Pacific",
+    "productGroupId": "14",
+    "summary": "Q2 2025 Chinese Jade Maintenance",
+    "teamName": "Chinese Jade",
+    "teamId": "25",
+    "type": "corrective",
+    "stage": "Release & Measure",
+    "status": "Proposal",
+    "score": 3,
+    "workingGroup": {
+      "label": "Engagement",
+      "value": "4",
+      "__typename": "WorkingGroup"
+    },
+    "opportunityScore": {
+      "impact": 4,
+      "effort": 3,
+      "calculated": 4,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "Site consistently Running",
+      "feature": "fixing issues as they are found and upgrading systems with any needed security fixes.",
+      "goal": "consistency",
+      "peopleSegment": "Our engineers",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "Keep the Site Up and Running.  Also maintain our Splunk and monitoring dashboards and keep production readiness recertification up to date.",
+    "jiraProjectKey": "CHJD2025Q2",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": -100,
+    "__typename": "InitiativeSearchResult"
+  },
+  {
+    "id": "1035628",
+    "productGroupName": "Platform Services",
+    "productGroupId": "4",
+    "summary": "Standards - Implement Solr's Learn to Rank in the Place Service",
+    "teamName": "Standards",
+    "teamId": "41",
+    "type": "initiative",
+    "stage": "Investigate",
+    "status": "Approved",
+    "score": 3,
+    "workingGroup": null,
+    "opportunityScore": {
+      "impact": 0,
+      "effort": 0,
+      "calculated": null,
+      "__typename": "OpportunityScore"
+    },
+    "hypothesis": {
+      "businessOutcome": "a flexible, improvable Place Search scoring system",
+      "feature": "Place Search system",
+      "goal": "introduces Solr's Learn to Rank",
+      "peopleSegment": "the Standards Team",
+      "__typename": "Hypothesis"
+    },
+    "businessValue": "We intend to replace the Place Search system's brittle scorers, thereby allowing us to address scoring deficiencies and errors without introducing new ones.  We also intend to continuously improve the Place Search scoring system by introducing corrections that do not break the scoring of other searches.\n\nWe currently do not have a Place Search measurement system, though we intend to introduce one with this initiative.  We believe we will increase the Place Search measurement score over time as we refine search scoring.  We believe this score will increase by over 20% within a year.",
+    "jiraProjectKey": "",
+    "jiraProjectId": "0",
+    "mondayBoardId": "0",
+    "contributingTeams": [],
+    "percentComplete": 0,
+    "onTrackPercent": 0,
+    "__typename": "InitiativeSearchResult"
+  }
+]

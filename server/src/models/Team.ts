@@ -1,18 +1,38 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
-// Helper function to handle array fields for different database types
+class Team extends Model {
+  public id!: string;
+  public name!: string;
+  public description!: string | null;
+  public managerId!: string;
+  public managerName!: string;
+  public capacity!: number;
+  public currentWorkload!: number;
+  public memberCount!: number;
+  public skills!: string[];
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+  public assignments?: any[]; // Add this property for typing (should be TeamAssignment[] in a full type-safe setup)
+}
+
 const getArrayFieldType = () => {
   const dialect = sequelize.getDialect();
   if (dialect === 'sqlite') {
     return {
       type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '[]',
       get(this: any) {
-        const value = this.getDataValue(arguments[0]);
-        return value ? JSON.parse(value) : [];
+        const value = this.getDataValue('skills');
+        try {
+          return value ? JSON.parse(value) : [];
+        } catch {
+          return [];
+        }
       },
       set(this: any, value: string[]) {
-        this.setDataValue(arguments[0], JSON.stringify(value || []));
+        this.setDataValue('skills', JSON.stringify(value || []));
       }
     };
   } else {
@@ -23,24 +43,6 @@ const getArrayFieldType = () => {
     };
   }
 };
-
-class Team extends Model {
-  public id!: string;
-  public name!: string;
-  public description!: string;
-  public managerId!: string;
-  public managerName!: string;
-  public capacity!: number;
-  public currentWorkload!: number;
-  public skills!: string[];
-  public memberCount!: number;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  // Association properties
-  public members?: any[];
-  public assignments?: any[];
-}
 
 Team.init(
   {
@@ -58,7 +60,7 @@ Team.init(
       allowNull: true,
     },
     managerId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     managerName: {
@@ -75,15 +77,12 @@ Team.init(
       allowNull: false,
       defaultValue: 0,
     },
-    skills: {
-      ...getArrayFieldType(),
-      allowNull: false
-    },
     memberCount: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
     },
+    skills: getArrayFieldType(),
   },
   {
     sequelize,

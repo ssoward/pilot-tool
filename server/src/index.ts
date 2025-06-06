@@ -50,11 +50,13 @@ import initiativeRoutes from './routes/initiativeRoutes';
 import aiRoutes from './routes/aiRoutes';
 import teamRoutes from './routes/teamRoutes';
 import roadmapRoutes from './routes/roadmapRoutes';
+import employeeRoutes from './routes/employeeRoutes'; // Add this line
 
 app.use('/api/initiatives', initiativeRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api', teamRoutes);
 app.use('/api', roadmapRoutes);
+app.use('/api/employees', employeeRoutes); // Add this line
 
 // Default catch-all route
 app.use('*', (req, res) => {

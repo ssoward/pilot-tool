@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-test", // Separate output directory for tests if needed
+    "noEmit": true // Or true, depending on if you want to emit JS for tests separately
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/tests/**/*.ts"
+  ]
+}
