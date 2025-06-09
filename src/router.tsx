@@ -6,9 +6,9 @@ import RoadmapVisualization from './components/RoadmapVisualization';
 import InitiativeAssignmentPage from './pages/InitiativeAssignmentPage';
 import EmployeesPage from './pages/EmployeesPage';
 import InitiativeManagementPage from './pages/InitiativeManagementPage';
+import InitiativeDetail from './pages/InitiativeDetail';
 
 // Placeholder components for routes we haven't created yet
-const InitiativeDetail = () => <div>Initiative Detail Page</div>;
 const Reports = () => <div>Reports Page</div>;
 const Login = () => <div>Login Page</div>;
 const NotFound = () => <div className="flex flex-col items-center justify-center h-screen">
