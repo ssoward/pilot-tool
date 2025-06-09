@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 export interface Notification {
@@ -38,7 +38,11 @@ interface NotificationProviderProps {
 export const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp'>) => {
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp'>) => {
     const id = Math.random().toString(36).substr(2, 9);
     const newNotification: Notification = {
       ...notification,
@@ -56,15 +60,11 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
     }
 
     return id;
-  };
+  }, [removeNotification]);
 
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
-  const clearAllNotifications = () => {
+  const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-  };
+  }, []);
 
   return (
     <NotificationContext.Provider value={{

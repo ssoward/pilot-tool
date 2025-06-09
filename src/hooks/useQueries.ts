@@ -339,7 +339,8 @@ export const useCapacityProjection = (startDate: Date, endDate: Date, teamIds?: 
     queryKey: ['capacity-projection', startDate.toISOString(), endDate.toISOString(), teamIds],
     queryFn: () => roadmapService.getCapacityProjection(startDate, endDate, teamIds),
     enabled: !!startDate && !!endDate,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 15 * 60 * 1000, // 15 minutes - capacity projections change slowly
+    gcTime: 30 * 60 * 1000, // 30 minutes
   });
 };
 

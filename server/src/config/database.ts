@@ -68,26 +68,22 @@ const syncDatabase = async () => {
     const { setupAssociations } = await import('../models/associations');
     setupAssociations();
     
-    // For SQLite in development, skip sync if database already exists to prevent migration loops
-    // if (process.env.USE_SQLITE === 'true' && process.env.NODE_ENV === 'development') {
-    //   const fs = require('fs');
-    //   const dbPath = path.join(__dirname, '../../data/pilot_tool.sqlite');
-    //   
-    //   if (fs.existsSync(dbPath)) {
-    //     console.log('Database synchronized successfully. (SQLite database already exists, skipping sync)');
-    //     return;
-    //   }
-    // }
-    
-    // Sync options based on environment
-    const syncOptions = process.env.USE_SQLITE === 'true' 
-      ? { force: false, alter: true } 
-      : { force: false, alter: true };
-    
-    await sequelize.sync(syncOptions);
-    console.log('Database synchronized successfully.');
+    try {
+      // Use alter: true to only make necessary changes without dropping data
+      // Force sync only when FORCE_SYNC environment variable is set
+      const syncOptions = process.env.FORCE_SYNC === 'true' 
+        ? { force: true }  // Clean slate when explicitly requested
+        : { alter: true }; // Safer default that preserves data
+        
+      await sequelize.sync(syncOptions);
+      console.log('Database synchronized successfully.');
+    } catch (syncError) {
+      console.warn('Database sync failed, but continuing with server startup:', syncError);
+      // Continue with server startup even if sync fails
+    }
   } catch (error) {
     console.error('Error synchronizing database:', error);
+    // Don't throw the error, just log it and continue
   }
 };
 

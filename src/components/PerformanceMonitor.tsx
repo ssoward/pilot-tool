@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNotifications } from '../contexts/NotificationContext';
 import { usePerformanceMetrics } from '../hooks/useQueries';
 
@@ -14,81 +14,49 @@ export const PerformanceMonitor = ({ className = '' }: PerformanceMonitorProps) 
     memoryUsage: 0,
     networkRequests: 0,
   });
-  const [queryMetrics, setQueryMetrics] = useState({
-    totalQueries: 0,
-    loadingQueries: 0,
-    errorQueries: 0,
-    successQueries: 0,
-    cacheHitRatio: 0,
-  });
   
   const { getQueryMetrics } = usePerformanceMetrics();
   const { addNotification } = useNotifications();
-  const hasShownWarning = useRef(false);
-  const pageLoadTime = useRef(performance.now());
-
-  // Memoize the update function to prevent recreating it on every render
-  const updatePerformance = useCallback(() => {
-    const metrics = getQueryMetrics();
-    const currentTime = performance.now();
-    const timeSinceLoad = currentTime - pageLoadTime.current;
-    
-    setPerformanceData({
-      loadTime: Math.round(timeSinceLoad),
-      renderTime: Math.round(currentTime),
-      memoryUsage: (performance as any).memory ? 
-        Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0,
-      networkRequests: metrics.totalQueries,
-    });
-
-    setQueryMetrics(metrics);
-  }, [getQueryMetrics]);
+  const hasWarned = useRef(false);
 
   useEffect(() => {
-    // Lightweight performance monitoring - only basic metrics without timing operations
-    const performanceCheck = () => {
-      // Skip monitoring if tab is not visible to save resources
-      if (document.hidden) return;
-      
-      updatePerformance();
-      
-      // Only warn on very high memory usage to avoid false positives
-      const memoryUsage = (performance as any).memory ? 
-        Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0;
-      
-      if (memoryUsage > 500 && !hasShownWarning.current) {
-        hasShownWarning.current = true;
-        addNotification({
-          type: 'warning',
-          title: 'Very High Memory Usage',
-          message: 'Application is using excessive memory. Consider refreshing the page.',
-          duration: 5000,
+    const updatePerformance = () => {
+      try {
+        const startTime = performance.now();
+        const metrics = getQueryMetrics();
+        const renderTime = performance.now() - startTime;
+        
+        setPerformanceData({
+          loadTime: Math.round(renderTime),
+          renderTime: Math.round(renderTime),
+          memoryUsage: (performance as any).memory ? 
+            Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0,
+          networkRequests: metrics.totalQueries,
         });
+
+        // Alert on performance issues only once per session
+        if (renderTime > 3000 && !hasWarned.current) {
+          hasWarned.current = true;
+          addNotification({
+            type: 'warning',
+            title: 'Performance Warning',
+            message: 'Dashboard is loading slowly. Consider refreshing the page.',
+            duration: 5000,
+          });
+        }
+      } catch (error) {
+        console.warn('Performance monitoring error:', error);
       }
     };
 
-    // Initial check (only if visible)
-    if (!document.hidden) {
-      updatePerformance();
-    }
+    // Run immediately
+    updatePerformance();
     
-    // Set up interval for periodic checks - much less frequent to minimize performance impact
-    const interval = setInterval(performanceCheck, 60000); // Check every 60 seconds
+    // Then run every 5 seconds
+    const interval = setInterval(updatePerformance, 5000);
 
-    // Handle visibility change to pause/resume monitoring
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        updatePerformance();
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [updatePerformance, addNotification]);
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array to run only once
 
   if (!isVisible) {
     return (
@@ -103,6 +71,8 @@ export const PerformanceMonitor = ({ className = '' }: PerformanceMonitorProps) 
       </button>
     );
   }
+
+  const queryMetrics = getQueryMetrics();
 
   return (
     <div className={`fixed bottom-4 left-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm z-40 ${className}`}>

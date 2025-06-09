@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import aiService from '../services/aiService';
 import type { Initiative } from '../types/Initiative';
 
@@ -90,22 +90,8 @@ export const AIProvider = ({ children }: AIProviderProps) => {
   const [metrics, setMetrics] = useState<AIMetrics | null>(null);
   const [chatHistory, setChatHistory] = useState<{ type: 'question' | 'answer'; text: string; timestamp: Date }[]>([]);
 
-  // Auto-refresh insights every 30 minutes
-  useEffect(() => {
-    const refreshInsightsPeriodically = async () => {
-      try {
-        await getContextualInsights('dashboard');
-      } catch (err) {
-        console.error('Failed to refresh insights:', err);
-      }
-    };
-
-    const interval = setInterval(refreshInsightsPeriodically, 30 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getInitiativeSuggestions = async (initiativeId: string): Promise<string> => {
+  // Wrap functions with useCallback to prevent infinite re-renders
+  const getInitiativeSuggestions = useCallback(async (initiativeId: string): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
@@ -118,9 +104,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getDependencyAnalysis = async (): Promise<string> => {
+  const getDependencyAnalysis = useCallback(async (): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
@@ -133,9 +119,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getExecutiveSummary = async (): Promise<string> => {
+  const getExecutiveSummary = useCallback(async (): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
@@ -148,9 +134,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const askQuestion = async (question: string): Promise<string> => {
+  const askQuestion = useCallback(async (question: string): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
@@ -173,9 +159,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getDetailedInitiativeAnalysis = async (initiativeId: string): Promise<DetailedAnalysis> => {
+  const getDetailedInitiativeAnalysis = useCallback(async (initiativeId: string): Promise<DetailedAnalysis> => {
     try {
       setLoading(true);
       setError(null);
@@ -188,9 +174,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const generateAIMetrics = async (initiatives: Initiative[]): Promise<AIMetrics> => {
+  const generateAIMetrics = useCallback(async (initiatives: Initiative[]): Promise<AIMetrics> => {
     try {
       setLoading(true);
       setError(null);
@@ -204,9 +190,9 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getContextualInsights = async (context: string, data?: any): Promise<AIInsight[]> => {
+  const getContextualInsights = useCallback(async (context: string, data?: any): Promise<AIInsight[]> => {
     try {
       setLoading(true);
       setError(null);
@@ -220,20 +206,45 @@ export const AIProvider = ({ children }: AIProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const clearChatHistory = () => {
+  const clearChatHistory = useCallback(() => {
     setChatHistory([]);
-  };
+  }, []);
 
-  const refreshInsights = async () => {
+  const refreshInsights = useCallback(async () => {
     try {
-      // Refresh insights based on current context
-      await getContextualInsights('dashboard');
+      // Refresh insights based on current context - call service directly to avoid circular dependency
+      const result = await aiService.getContextualInsights('dashboard');
+      setInsights(result);
     } catch (err) {
       console.error('Failed to refresh insights:', err);
     }
-  };
+  }, []);
+
+  // Auto-refresh insights every 30 minutes - use longer interval and ref to prevent excessive calls
+  useEffect(() => {
+    let isMounted = true;
+    
+    const refreshInsightsPeriodically = async () => {
+      if (!isMounted) return;
+      try {
+        // Call service directly to avoid circular dependency
+        const result = await aiService.getContextualInsights('dashboard');
+        setInsights(result);
+      } catch (err) {
+        console.error('Failed to refresh insights:', err);
+      }
+    };
+
+    // Set longer interval and only call once on mount, not repeatedly
+    const interval = setInterval(refreshInsightsPeriodically, 30 * 60 * 1000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []); // Empty dependency array to prevent re-running
 
   return (
     <AIContext.Provider

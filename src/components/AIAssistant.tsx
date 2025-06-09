@@ -70,7 +70,7 @@ const AIAssistant = ({ className = '', currentInitiative }: AIAssistantProps) =>
     if (isOpen && activeTab === 'insights') {
       loadContextualInsights();
     }
-  }, [isOpen, activeTab, location.pathname]);
+  }, [isOpen, activeTab, location.pathname]); // Removed getContextualInsights from dependencies as it's now stable
 
   const loadContextualInsights = async () => {
     try {

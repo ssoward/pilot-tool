@@ -248,7 +248,7 @@ ${initiatives.map(initiative => `
 /**
  * Generate contextual insights based on current view and data
  */
-const generateContextualInsights = async (context: string, data?: any): Promise<any[]> => {
+export const generateContextualInsights = async (context: string, data?: any): Promise<any[]> => {
   try {
     const messages: Message[] = [
       {

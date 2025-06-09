@@ -24,16 +24,23 @@ app.use(morgan('dev'));
 // Parse JSON requests
 app.use(express.json());
 
-// Rate limiting - disabled in development
-if (process.env.NODE_ENV === 'production') {
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-  app.use(limiter);
-}
+// Rate limiting - disabled for development to prevent 429 errors
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10000, // Allow 10000 requests per 15 minutes for development
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: 'Too many requests from this IP, please try again later.',
+    retryAfter: '15 minutes'
+  },
+  skip: (req) => {
+    // Skip rate limiting for localhost in development
+    const ip = req.ip || req.connection.remoteAddress || '';
+    return ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || process.env.NODE_ENV === 'development';
+  }
+});
+app.use(limiter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

@@ -82,14 +82,14 @@ const AIInitiativeAnalysis = ({ initiative, className = '' }: AIInitiativeAnalys
     if (isExpanded && initiative.id) {
       fetchAnalysis();
     }
-  }, [isExpanded, initiative.id]);
+  }, [isExpanded, initiative.id]); // Removed getDetailedInitiativeAnalysis as it's now stable with useCallback
 
   const fetchAnalysis = async () => {
     try {
       const detailedAnalysis = await getDetailedInitiativeAnalysis(initiative.id);
       
-      // Parse the response and update each section
-      const sections = analysis.map((section) => {
+      // Parse the response and update each section with functional state update
+      setAnalysis(currentAnalysis => currentAnalysis.map((section) => {
         let content = '';
         let status: 'loading' | 'completed' | 'error' = 'completed';
 
@@ -134,17 +134,14 @@ const AIInitiativeAnalysis = ({ initiative, className = '' }: AIInitiativeAnalys
         }
 
         return { ...section, content, status };
-      });
-
-      setAnalysis(sections);
+      }));
     } catch (error) {
       // Update all sections to error state
-      const errorSections = analysis.map(section => ({
+      setAnalysis(currentAnalysis => currentAnalysis.map(section => ({
         ...section,
         content: 'Unable to generate analysis at this time.',
         status: 'error' as const
-      }));
-      setAnalysis(errorSections);
+      })));
     }
   };
 
